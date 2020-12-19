@@ -5,6 +5,10 @@
 #include "curl-websocket/curl-websocket.h"
 
 
+#define DEBUG_MODE     1 /* set to 1 to activate debug mode */
+#define MEMDEBUG_MODE  1 /* set to 1 to activate memdebug mode */
+
+
 #define BASE_API_URL "https://discord.com/api"
 #define BASE_GATEWAY_URL "wss://gateway.discord.gg/?v=6&encoding=json"
 

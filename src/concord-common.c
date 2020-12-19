@@ -13,13 +13,13 @@
 struct concord_context_s*
 Concord_context_init(uv_loop_t *loop, curl_socket_t sockfd)
 {
-    DEBUG_NOTOP_PUTS("Creating new context");
+    D_NOTOP_PUTS("Creating new context");
     struct concord_context_s *new_context = safe_calloc(1, sizeof *new_context);
 
     new_context->sockfd = sockfd;
 
     int uvcode = uv_poll_init_socket(loop, &new_context->poll_handle, sockfd);
-    DEBUG_ASSERT(!uvcode, uv_strerror(uvcode));
+    ASSERT_S(!uvcode, uv_strerror(uvcode));
 
     uv_handle_set_data((uv_handle_t*)&new_context->poll_handle, uv_loop_get_data(loop));
 
@@ -29,7 +29,7 @@ Concord_context_init(uv_loop_t *loop, curl_socket_t sockfd)
 static void
 _uv_context_destroy_cb(uv_handle_t *handle)
 {
-    DEBUG_NOTOP_PUTS("Destroying context");
+    D_NOTOP_PUTS("Destroying context");
     struct concord_context_s *context = (struct concord_context_s*)handle;
     safe_free(context);
 }
@@ -105,7 +105,7 @@ concord_cleanup(concord_t *concord)
 void
 concord_global_init(){
     int code = curl_global_init(CURL_GLOBAL_DEFAULT);
-    DEBUG_ASSERT(!code, "Couldn't start curl_global_init()");
+    ASSERT_S(!code, "Couldn't start curl_global_init()");
 }
 
 void

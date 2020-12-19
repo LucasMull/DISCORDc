@@ -3,21 +3,23 @@
 
 #include <libconcord.h>
 
+#include "concord-common.h"
+#include "debug.h"
 
-/* @todo instead of abort(), it should throw the error
-      somewhere */
-//this is redefined as a macro
+
+#define M_OUT stderr
+#define M_FMT_PREFIX "[%s:%d] %s()\n\t"
+#define M_FMT_ARGS file, line, func
+
+
 void*
 __safe_calloc(size_t nmemb, size_t size, const char file[], const int line, const char func[])
 {
     void *ptr = calloc(nmemb, size);
+    ASSERT_S(NULL != ptr, "Out of memory(%ld bytes)");
 
-    if (NULL == ptr){
-        fprintf(stderr, "[%s:%d] %s()\n\tOut of memory(%ld bytes)\n", file, line, func, size);
-        abort();
-    }
 #if MEMDEBUG_MODE == 1
-    fprintf(stderr, "[%s:%d] %s()\n\tAlloc:\t%p(%ld bytes)\n", file, line, func, ptr, size);
+    fprintf(M_OUT, M_FMT_PREFIX "Alloc:\t%p(%ld bytes)\n", M_FMT_ARGS, ptr, size);
 #else
     (void)file;
     (void)line;
@@ -31,13 +33,10 @@ void*
 __safe_malloc(size_t size, const char file[], const int line, const char func[])
 {
     void *ptr = malloc(size);
+    ASSERT_S(NULL != ptr, "Out of memory(%ld bytes)");
 
-    if (NULL == ptr){
-        fprintf(stderr, "[%s:%d] %s()\n\tOut of memory(%ld bytes)\n", file, line, func, size);
-        abort();
-    }
 #if MEMDEBUG_MODE == 1
-    fprintf(stderr, "[%s:%d] %s()\n\tAlloc:\t%p(%ld bytes)\n", file, line, func, ptr, size);
+    fprintf(M_OUT, M_FMT_PREFIX "Alloc:\t%p(%ld bytes)\n", M_FMT_ARGS, ptr, size);
 #else
       (void)file;
       (void)line;
@@ -51,13 +50,10 @@ void*
 __safe_realloc(void *ptr, size_t size, const char file[], const int line, const char func[])
 {
     void *tmp = realloc(ptr, size);
+    ASSERT_S(NULL != ptr, "Out of memory(%ld bytes)");
 
-    if (NULL == tmp){
-        fprintf(stderr, "[%s:%d] %s()\n\tOut of memory(%ld bytes)\n", file, line, func, size);
-        abort();
-    }
 #if MEMDEBUG_MODE == 1
-    fprintf(stderr, "[%s:%d] %s()\n\tAlloc:\t%p(%ld bytes)\n", file, line, func, tmp, size);
+    fprintf(M_OUT, M_FMT_PREFIX "Alloc:\t%p(%ld bytes)\n", M_FMT_ARGS, ptr, size);
 #else
     (void)file;
     (void)line;
@@ -67,21 +63,21 @@ __safe_realloc(void *ptr, size_t size, const char file[], const int line, const 
     return tmp;
 }
 
-//this is redefined as a macro
 void
 __safe_free(void **p_ptr, const char file[], const int line, const char func[])
 {
-    if(*p_ptr){
+    if(*p_ptr)
+    {
         free(*p_ptr);
 #if MEMDEBUG_MODE == 1
-        fprintf(stderr, "[%s:%d] %s()\n\tFree:\t%p\n", file, line, func, *p_ptr);
+        fprintf(M_OUT, M_FMT_PREFIX "Free:\t%p\n", M_FMT_ARGS, *p_ptr);
 #else
         (void)file;
         (void)line;
         (void)func;
 #endif
 
-      *p_ptr = NULL;
+        *p_ptr = NULL;
     } 
 }
 

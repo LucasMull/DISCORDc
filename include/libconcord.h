@@ -8,9 +8,6 @@
 #include <uv.h>
 
 
-#define DEBUG_MODE     1 /* set to 1 to activate debug mode */
-#define MEMDEBUG_MODE  0 /* set to 1 to activate memdebug mode */
-
 /* CHANNEL TYPES
 https://discord.com/developers/docs/resources/channel#channel-object-channel-types */
 enum discord_channel_types {

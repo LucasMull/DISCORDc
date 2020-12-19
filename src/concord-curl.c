@@ -20,16 +20,16 @@ Concord_reqheader_init(concord_api_t *api)
     void *tmp; /* for checking potential errors */
 
     new_header = curl_slist_append(new_header,"X-RateLimit-Precision: millisecond");
-    DEBUG_ASSERT(NULL != new_header, "Couldn't create request header");
+    ASSERT_S(NULL != new_header, "Couldn't create request header");
 
     tmp = curl_slist_append(new_header, strcat(auth, api->token));
-    DEBUG_ASSERT(NULL != tmp, "Couldn't create request header");
+    ASSERT_S(NULL != tmp, "Couldn't create request header");
 
     tmp = curl_slist_append(new_header,"User-Agent: concord (http://github.com/LucasMull/concord, v0.0)");
-    DEBUG_ASSERT(NULL != tmp, "Couldn't create request header");
+    ASSERT_S(NULL != tmp, "Couldn't create request header");
 
     tmp = curl_slist_append(new_header,"Content-Type: application/json");
-    DEBUG_ASSERT(NULL != tmp, "Couldn't create request header");
+    ASSERT_S(NULL != tmp, "Couldn't create request header");
 
     return new_header;
 }
@@ -60,11 +60,11 @@ _curl_header_cb(char *content, size_t size, size_t nmemb, void *p_userdata)
         continue;
 
     char *field = strdup(&content[strlen(content)+i]);
-    DEBUG_ASSERT(NULL != field, "Out of memory");
+    ASSERT_S(NULL != field, "Out of memory");
 
     /* store key/value pair in a dictionary */
     void *res = dictionary_set(header, key, field, &free);
-    DEBUG_ASSERT(res == field, "Couldn't fetch header content");
+    ASSERT_S(res == field, "Couldn't fetch header content");
 
     return realsize; /* return value for curl internals */
 }
@@ -78,7 +78,7 @@ _curl_body_cb(char *content, size_t size, size_t nmemb, void *p_userdata)
 
 
     char *tmp = realloc(response_body->str, response_body->size + realsize + 1);
-    DEBUG_ASSERT(NULL != tmp, "Out of memory");
+    ASSERT_S(NULL != tmp, "Out of memory");
 
     response_body->str = tmp;
     memcpy(response_body->str + response_body->size, content, realsize);
@@ -94,34 +94,34 @@ CURL*
 Concord_conn_easy_init(concord_api_t *api, struct concord_conn_s *conn)
 {
     CURL *new_easy_handle = curl_easy_init();
-    DEBUG_ASSERT(NULL != new_easy_handle, "Out of memory");
+    ASSERT_S(NULL != new_easy_handle, "Out of memory");
 
     CURLcode ecode;
     /*
-    DEBUG_ONLY( ecode = curl_easy_setopt(new_easy_handle, CURLOPT_VERBOSE, 2L) );
-    DEBUG_ONLY( DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode)) );
+    D_ONLY( ecode = curl_easy_setopt(new_easy_handle, CURLOPT_VERBOSE, 2L) );
+    D_ONLY( ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode)) );
     */
     ecode = curl_easy_setopt(new_easy_handle, CURLOPT_HTTPHEADER, api->request_header);
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
     ecode = curl_easy_setopt(new_easy_handle, CURLOPT_FOLLOWLOCATION, 1L);
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
     ecode = curl_easy_setopt(new_easy_handle, CURLOPT_PRIVATE, conn);
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
     /* SET CURL_EASY CALLBACKS */
     ecode = curl_easy_setopt(new_easy_handle, CURLOPT_WRITEFUNCTION, &_curl_body_cb);
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
     ecode = curl_easy_setopt(new_easy_handle, CURLOPT_WRITEDATA, &conn->response_body);
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
     ecode = curl_easy_setopt(new_easy_handle, CURLOPT_HEADERFUNCTION, &_curl_header_cb);
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
     ecode = curl_easy_setopt(new_easy_handle, CURLOPT_HEADERDATA, api->header);
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
     return new_easy_handle;
 }
@@ -131,20 +131,20 @@ CURLM*
 Concord_api_multi_init(concord_api_t *api)
 {
     CURLM *new_multi_handle = curl_multi_init();
-    DEBUG_ASSERT(NULL != new_multi_handle, "Out of memory");
+    ASSERT_S(NULL != new_multi_handle, "Out of memory");
 
     CURLMcode mcode;
     mcode = curl_multi_setopt(new_multi_handle, CURLMOPT_SOCKETFUNCTION, &Concord_api_socket_cb);
-    DEBUG_ASSERT(CURLM_OK == mcode, curl_multi_strerror(mcode));
+    ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
     mcode = curl_multi_setopt(new_multi_handle, CURLMOPT_SOCKETDATA, api);
-    DEBUG_ASSERT(CURLM_OK == mcode, curl_multi_strerror(mcode));
+    ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
     mcode = curl_multi_setopt(new_multi_handle, CURLMOPT_TIMERFUNCTION, &Concord_api_timeout_cb);
-    DEBUG_ASSERT(CURLM_OK == mcode, curl_multi_strerror(mcode));
+    ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
     mcode = curl_multi_setopt(new_multi_handle, CURLMOPT_TIMERDATA, &api->timeout);
-    DEBUG_ASSERT(CURLM_OK == mcode, curl_multi_strerror(mcode));
+    ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
     return new_multi_handle;
 }
@@ -162,14 +162,14 @@ Concord_ws_easy_init(concord_ws_t *ws)
     };
 
     CURL *new_easy_handle = cws_new(BASE_GATEWAY_URL, NULL, &cws_cbs);
-    DEBUG_ASSERT(NULL != new_easy_handle, "Out of memory");
+    ASSERT_S(NULL != new_easy_handle, "Out of memory");
 
     CURLcode ecode;
-    DEBUG_ONLY(ecode = curl_easy_setopt(new_easy_handle, CURLOPT_VERBOSE, 2L));
-    DEBUG_ONLY_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    D_ONLY(ecode = curl_easy_setopt(new_easy_handle, CURLOPT_VERBOSE, 2L));
+    D_ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
     ecode = curl_easy_setopt(new_easy_handle, CURLOPT_FOLLOWLOCATION, 2L);
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
     return new_easy_handle;
 }
@@ -178,20 +178,20 @@ CURLM*
 Concord_ws_multi_init(concord_ws_t *ws)
 {
     CURLM *new_multi_handle = curl_multi_init();
-    DEBUG_ASSERT(NULL != new_multi_handle, "Out of memory");
+    ASSERT_S(NULL != new_multi_handle, "Out of memory");
 
     CURLMcode mcode;
     mcode = curl_multi_setopt(new_multi_handle, CURLMOPT_SOCKETFUNCTION, &Concord_ws_socket_cb);
-    DEBUG_ASSERT(CURLM_OK == mcode, curl_multi_strerror(mcode));
+    ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
     mcode = curl_multi_setopt(new_multi_handle, CURLMOPT_SOCKETDATA, ws);
-    DEBUG_ASSERT(CURLM_OK == mcode, curl_multi_strerror(mcode));
+    ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
     mcode = curl_multi_setopt(new_multi_handle, CURLMOPT_TIMERFUNCTION, &Concord_ws_timeout_cb);
-    DEBUG_ASSERT(CURLM_OK == mcode, curl_multi_strerror(mcode));
+    ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
     mcode = curl_multi_setopt(new_multi_handle, CURLMOPT_TIMERDATA, &ws->timeout);
-    DEBUG_ASSERT(CURLM_OK == mcode, curl_multi_strerror(mcode));
+    ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
     return new_multi_handle;
 }
@@ -217,10 +217,10 @@ Concord_conn_set_method(struct concord_conn_s *conn, enum http_method method)
         ecode = curl_easy_setopt(conn->easy_handle, CURLOPT_UPLOAD, 1L);
         break;
     default:
-        DEBUG_ERR("Unknown http_method\n\tCode: %d", method);
+        ERROR("Unknown http_method\n\tCode: %d", method);
     }
 
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 }
 
 void
@@ -230,5 +230,5 @@ Concord_conn_set_url(struct concord_conn_s *conn, char endpoint[])
 
 
     CURLcode ecode = curl_easy_setopt(conn->easy_handle, CURLOPT_URL, strcat(base_url, endpoint));
-    DEBUG_ASSERT(CURLE_OK == ecode, curl_easy_strerror(ecode));
+    ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 }
