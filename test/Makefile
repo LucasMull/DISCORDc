@@ -25,18 +25,18 @@ CFLAGS	= -Wall -Werror -Wextra -pedantic -g
 
 .PHONY : clean purge
 
-all: test-api test-websockets
+all: test-api test-ws
 
 test-api : test-api.c $(LIBDIR) Makefile
 	$(CC) $(CFLAGS) $(LIBS_CFLAGS) \
 	      test-api.c -o $@ $(LIBS_LDFLAGS)
 
-test-websockets : test-websockets.c $(LIBDIR) Makefile
+test-ws : test-ws.c $(LIBDIR) Makefile
 	$(CC) $(CFLAGS) $(LIBS_CFLAGS) \
-	      test-websockets.c -o $@ $(LIBS_LDFLAGS)
+	      test-ws.c -o $@ $(LIBS_LDFLAGS)
 
 $(LIBDIR) :
 	$(MAKE) -C $(TOP)
 
 clean :
-	rm -rf test-api test-websockets *.out
+	rm -rf test-api test-ws *.out
