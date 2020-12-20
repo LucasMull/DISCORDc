@@ -9,7 +9,7 @@
 ## API Roadmap
 
 ### [V8 Error Messages](https://discord.com/developers/docs/reference#error-messages)
-### [ ] [Authentication](https://discord.com/developers/docs/reference#authentication)
+### [Authentication](https://discord.com/developers/docs/reference#authentication)
 - [x] [Bot Token Authentication](https://discord.com/developers/docs/reference#authentication-example-bot-token-authorization-header)
 - [ ] [Bearer Token Authentication](https://discord.com/developers/docs/reference#authentication-example-bearer-token-authorization-header)
 ### [RateLimits](https://discord.com/developers/docs/topics/rate-limits)
