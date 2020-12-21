@@ -230,6 +230,8 @@ _concord_asynchronous_perform(concord_api_t *api, CURL *easy_handle)
         return;
     case HTTP_UNAUTHORIZED:
         ERROR_MIN(HTTP_UNAUTHORIZED);
+    case HTTP_FORBIDDEN:
+        ERROR_MIN(HTTP_FORBIDDEN);
     case CURL_NO_RESPONSE: 
         ASSERT_S(!url || !*url, "No server response has been received");
         curl_multi_remove_handle(api->multi_handle, easy_handle);
@@ -467,6 +469,8 @@ Concord_register_bucket_key(concord_api_t *api, struct concord_conn_s *conn, cha
             break;
         case HTTP_UNAUTHORIZED:
             ERROR_MIN(HTTP_UNAUTHORIZED);
+        case HTTP_FORBIDDEN:
+            ERROR_MIN(HTTP_FORBIDDEN);
         case CURL_NO_RESPONSE: 
             ASSERT_S(!url || !*url, "No server response has been received");
             return; /* early exit */
