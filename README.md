@@ -14,10 +14,10 @@ This library is currently a work in progress. Many features are still missing an
 ### [Authentication](https://discord.com/developers/docs/reference#authentication)
 - [x] [Bot Token Authentication](https://discord.com/developers/docs/reference#authentication-example-bot-token-authorization-header)
 - [ ] [Bearer Token Authentication](https://discord.com/developers/docs/reference#authentication-example-bearer-token-authorization-header)
-### [RateLimits](https://discord.com/developers/docs/topics/rate-limits)
+### :heavy_check_mark: [RateLimits](https://discord.com/developers/docs/topics/rate-limits)
 - [x] RateLimit Bucket Queuing
 - [x] [Exceeding A Rate Limit](https://discord.com/developers/docs/topics/rate-limits#exceeding-a-rate-limit)
-- [ ] [Invalid Request Limit](https://discord.com/developers/docs/topics/rate-limits#invalid-request-limit)
+- [x] [Invalid Request Limit](https://discord.com/developers/docs/topics/rate-limits#invalid-request-limit)
 ### [Slash Commands](https://discord.com/developers/docs/interactions/slash-commands#slash-commands)
 ### [Audit Log](https://discord.com/developers/docs/resources/audit-log#audit-logs-resource)
 ### [Channels Resource](https://discord.com/developers/docs/resources/channel#channels-resource)
@@ -141,3 +141,4 @@ This library is currently a work in progress. Many features are still missing an
 - [ ] [Interactions](https://discord.com/developers/docs/topics/gateway#interactions)
 - [ ] [Get Gateway](https://discord.com/developers/docs/topics/gateway#get-gateway)
 - [ ] [Get Gateway Bot](https://discord.com/developers/docs/topics/gateway#get-gateway-bot)
+### [OAuth2](https://discord.com/developers/docs/topics/oauth2)
