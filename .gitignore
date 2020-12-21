@@ -2,4 +2,6 @@ libuv
 test/bot_token
 test/run
 update_curl.sh
-
+obj
+test/test-api
+test/test-ws
