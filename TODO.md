@@ -12,6 +12,7 @@ This document describes features to be incorporated in the future.
 
 ## MEDIUM
 
+- 403 Forbidden should be dealt with properly
 - Hashtable size should be dynamically increased as necessary
 - Token should go through a hashing and dehashing function
 
