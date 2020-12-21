@@ -1,5 +1,7 @@
 # WORK IN PROGRESS
 
+This library is currently a work in progress. Many features are still missing and its ill advised to use it unless you want to contribute.
+
 ## Dependencies
 
   - [JSCON](https://github.com/LucasMull/JSCON)
