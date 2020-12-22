@@ -82,13 +82,13 @@ _concord_ws_disconnect(concord_ws_t *ws)
     uv_async_send(&ws->async);
     uv_thread_join(&ws->thread_id);
 
-    ASSERT_S(DISCONNECTED == ws->status, "Couldn't disconnect from gateway");
+    ASSERT_S(WS_DISCONNECTED == ws->status, "Couldn't disconnect from gateway");
 }
 
 void
 Concord_ws_destroy(concord_ws_t *ws)
 {
-    if ((CONNECTING|CONNECTED) & ws->status){
+    if ((WS_CONNECTING|WS_CONNECTED) & ws->status){
         _concord_ws_disconnect(ws);
     }
 
@@ -151,7 +151,7 @@ _uv_perform_cb(uv_poll_t *req, int uvstatus, int events)
 
         D_PRINT("HTTP completed with status %d '%s'", msg->data.result, curl_easy_strerror(msg->data.result));
 
-        ws->status = DISCONNECTED;
+        ws->status = WS_DISCONNECTED;
         uv_stop(ws->loop);
     }
 }
@@ -238,7 +238,7 @@ Concord_on_connect_cb(void *data, CURL *easy_handle, const char *ws_protocols)
 
     D_PRINT("Connected, WS-Protocols: '%s'", ws_protocols);
 
-    ws->status = CONNECTED;
+    ws->status = WS_CONNECTED;
 
     (void)easy_handle;
     (void)ws_protocols;
@@ -366,7 +366,7 @@ Concord_on_close_cb(void *data, CURL *easy_handle, enum cws_close_reason cwscode
 
     D_PRINT("CLOSE=%4d %zd bytes '%s'", cwscode, len, reason);
 
-    ws->status = DISCONNECTING;
+    ws->status = WS_DISCONNECTING;
 
     (void)easy_handle;
     (void)cwscode;
@@ -424,12 +424,12 @@ _concord_ws_run(void *ptr)
 void
 concord_ws_connect(concord_t *concord)
 {
-    if ((CONNECTING|CONNECTED) & concord->ws->status){
+    if ((WS_CONNECTING|WS_CONNECTED) & concord->ws->status){
         D_NOTOP_PUTS("Gateway already connected, returning ..."); 
         return;
     }
 
-    concord->ws->status = CONNECTING;
+    concord->ws->status = WS_CONNECTING;
 
     uv_thread_create(&concord->ws->thread_id, &_concord_ws_run, concord->ws);
 }
@@ -437,12 +437,12 @@ concord_ws_connect(concord_t *concord)
 void
 concord_ws_disconnect(concord_t *concord)
 {
-    if ((DISCONNECTING|DISCONNECTED) & concord->ws->status){
+    if ((WS_DISCONNECTING|WS_DISCONNECTED) & concord->ws->status){
         D_NOTOP_PUTS("Gateway already disconnected, returning ..."); 
         return;
     }
 
-    concord->ws->status = DISCONNECTING;
+    concord->ws->status = WS_DISCONNECTING;
 
     _concord_ws_disconnect(concord->ws);
 }
@@ -450,5 +450,5 @@ concord_ws_disconnect(concord_t *concord)
 int
 concord_ws_isrunning(concord_t *concord)
 {
-    return ((CONNECTING|CONNECTED) & concord->ws->status);
+    return ((WS_CONNECTING|WS_CONNECTED) & concord->ws->status);
 }

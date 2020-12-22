@@ -7,6 +7,15 @@
 #include <libjscon.h>
 #include <uv.h>
 
+/* This is the version number of the package from which this header
+ *  file origins */
+#define LIBCONCORD_VERSION "0.0.0-DEV"
+
+/* The numeric version number is also available "in parts" by using
+ *  these defines: */
+#define LIBCONCORD_VERSION_MAJOR 0
+#define LIBCONCORD_VERSION_MINOR 0
+#define LIBCONCORD_VERSION_PATCH 0
 
 /* CHANNEL TYPES
 https://discord.com/developers/docs/resources/channel#channel-object-channel-types */

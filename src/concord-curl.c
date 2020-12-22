@@ -10,9 +10,9 @@
 #include "debug.h"
 
 
-/* @todo create distinction between bot and user token */
+/* @todo create distinction between bot and bearer token */
 struct curl_slist*
-Concord_reqheader_init(concord_api_t *api)
+Concord_reqheader_init(char token[])
 {
     char auth[MAX_HEADER_LEN] = "Authorization: Bot "; 
 
@@ -22,10 +22,10 @@ Concord_reqheader_init(concord_api_t *api)
     new_header = curl_slist_append(new_header,"X-RateLimit-Precision: millisecond");
     ASSERT_S(NULL != new_header, "Couldn't create request header");
 
-    tmp = curl_slist_append(new_header, strcat(auth, api->token));
+    tmp = curl_slist_append(new_header, strcat(auth, token));
     ASSERT_S(NULL != tmp, "Couldn't create request header");
 
-    tmp = curl_slist_append(new_header,"User-Agent: concord (http://github.com/LucasMull/concord, v0.0)");
+    tmp = curl_slist_append(new_header,"User-Agent: libconcord (http://github.com/LucasMull/concord, v"LIBCONCORD_VERSION")");
     ASSERT_S(NULL != tmp, "Couldn't create request header");
 
     tmp = curl_slist_append(new_header,"Content-Type: application/json");

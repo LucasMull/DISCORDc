@@ -150,7 +150,7 @@ _concord_queue_recycle(concord_api_t *api, struct concord_queue_s *queue)
     ASSERT_S(NULL != queue->conns[queue->top_onhold], "Can't recycle conn from a NULL queue slot");
     ASSERT_S(queue->top_onhold < queue->size, "Queue top has reached threshold");
 
-    queue->conns[queue->top_onhold]->status = ON_HOLD;
+    queue->conns[queue->top_onhold]->status = CONN_ONHOLD;
 
     ++queue->top_onhold;
     ++api->transfers_onhold;
@@ -168,7 +168,7 @@ _concord_queue_push(concord_api_t *api, struct concord_queue_s *queue, struct co
     ASSERT_S(NULL == queue->conns[queue->top_onhold], "Can't push conn to a non-NULL queue slot");
     ASSERT_S(queue->top_onhold < queue->size, "Queue top has reached threshold");
 
-    conn->status = ON_HOLD;
+    conn->status = CONN_ONHOLD;
     conn->p_bucket = (struct concord_bucket_s*)queue;
 
     queue->conns[queue->top_onhold] = conn; 
@@ -205,7 +205,7 @@ Concord_queue_npop(concord_api_t *api, struct concord_queue_s *queue, int num_co
         ASSERT_S(NULL != conn, "Queue's slot is NULL, can't pop");
 
         curl_multi_add_handle(api->multi_handle, conn->easy_handle);
-        conn->status = RUNNING;
+        conn->status = CONN_RUNNING;
 
         ++queue->separator;
         --api->transfers_onhold;
@@ -312,7 +312,7 @@ Concord_bucket_build(
           the bucket hash matching this bucket_key with a new
           or existing bucket
 
-         the new_conn status is set to INNACTIVE, which means 
+         the new_conn status is set to CONN_INNACTIVE, which means 
           it will be ready for recycling after it has performed
           this connection */
         Concord_register_bucket_key(api, new_conn, bucket_key);
@@ -331,7 +331,7 @@ Concord_bucket_build(
 
             _concord_queue_push(api, &bucket->queue, new_conn);
         } else { 
-            D_NOTOP_PRINT("Recycling INNACTIVE connection at queue's slot %ld", bucket->queue.top_onhold);
+            D_NOTOP_PRINT("Recycling innactive connection at queue's slot %ld", bucket->queue.top_onhold);
             _concord_queue_recycle(api, &bucket->queue);
         }
 

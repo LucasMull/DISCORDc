@@ -125,10 +125,10 @@ struct concord_response_s {
 };
 
 enum conn_status {
-    INNACTIVE = 0,  /* conn is open for reuse/recycle */
-    RUNNING,        /* conn is awaiting server response */
-    PAUSE,          /* running conn has been temporarily paused */
-    ON_HOLD,        /* conn is waiting on queue, not running */
+    CONN_INNACTIVE = 0,  /* conn is open for reuse/recycle */
+    CONN_RUNNING,        /* conn is awaiting server response */
+    CONN_PAUSE,          /* running conn has been temporarily paused */
+    CONN_ONHOLD,         /* conn is waiting on queue, not running */
 };
 
 typedef void (concord_load_obj_ft)(void **p_object, struct concord_response_s *response_body);
@@ -170,10 +170,10 @@ struct concord_bucket_s {
 };
 
 enum ws_status {
-    DISCONNECTED   = 0,           /* disconnected from ws */
-    DISCONNECTING  = 1 << 0,      /* disconnecting from ws */
-    CONNECTING     = 1 << 1,      /* connecting to ws */
-    CONNECTED      = 1 << 2,      /* connected to ws */
+    WS_DISCONNECTED   = 0,           /* disconnected from ws */
+    WS_DISCONNECTING  = 1 << 0,      /* disconnecting from ws */
+    WS_CONNECTING     = 1 << 1,      /* connecting to ws */
+    WS_CONNECTED      = 1 << 2,      /* connected to ws */
 };
 
 typedef struct concord_ws_s {
@@ -202,10 +202,7 @@ typedef struct concord_ws_s {
 
 } concord_ws_t;
 
-/* @todo hash/unhash token */
 typedef struct concord_api_s {
-    char *token; /* bot/user token used as identification to the API */
-
     struct curl_slist *request_header; /* the default request header sent to discord servers */
 
     CURLM *multi_handle;
@@ -275,7 +272,6 @@ void Concord_transfers_run(concord_api_t *api);
 /*************/
 /* concord-ratelimit.c */
 
-
 char* Concord_tryget_major(char endpoint[]);
 int Concord_parse_ratelimit_remaining(struct concord_bucket_s *bucket, struct dictionary_s *header);
 long long Concord_parse_ratelimit_delay(int remaining, struct dictionary_s *header, bool use_clock);
@@ -292,7 +288,7 @@ struct concord_bucket_s* Concord_trycreate_bucket(concord_api_t *api, char bucke
 /*************/
 /* concord-curl.c */
 
-struct curl_slist* Concord_reqheader_init(concord_api_t *api);
+struct curl_slist* Concord_reqheader_init(char token[]);
 CURL* Concord_conn_easy_init(concord_api_t *api, struct concord_conn_s *conn);
 CURL* Concord_ws_easy_init(concord_ws_t *ws);
 CURLM* Concord_api_multi_init(concord_api_t *api);

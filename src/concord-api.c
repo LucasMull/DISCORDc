@@ -16,10 +16,7 @@ Concord_api_init(char token[])
     new_api->loop = uv_default_loop();
     uv_loop_set_data(new_api->loop, new_api);
 
-    new_api->token = strdup(token);
-    ASSERT_S(NULL != new_api->token, "Out of memory");
-
-    new_api->request_header = Concord_reqheader_init(new_api);
+    new_api->request_header = Concord_reqheader_init(token);
 
     uv_timer_init(new_api->loop, &new_api->timeout);
     uv_handle_set_data((uv_handle_t*)&new_api->timeout, new_api);
@@ -65,8 +62,6 @@ Concord_api_destroy(concord_api_t *api)
 
     safe_free(api->client_buckets);
 
-    safe_free(api->token);
-
     safe_free(api);
 }
 
@@ -91,7 +86,7 @@ _concord_load_obj_perform(struct concord_conn_s *conn)
     safe_free(conn->response_body.str);
     conn->response_body.size = 0;
 
-    conn->status = INNACTIVE;
+    conn->status = CONN_INNACTIVE;
 }
 
 static void
@@ -132,11 +127,11 @@ _concord_queue_pause(struct concord_queue_s *queue)
     concord_api_t *api = ((struct concord_bucket_s*)queue)->p_api;
 
     for (size_t i = queue->bottom_running; i < queue->separator; ++i){
-        if (RUNNING != queue->conns[i]->status)
+        if (CONN_RUNNING != queue->conns[i]->status)
             continue;
 
         curl_multi_remove_handle(api->multi_handle, queue->conns[i]->easy_handle);
-        queue->conns[i]->status = PAUSE; 
+        queue->conns[i]->status = CONN_PAUSE; 
     }
 }
 
@@ -150,11 +145,11 @@ _uv_queue_resume_cb(uv_timer_t *req)
     D_PRINT("Resuming pending transfers:\t%ld", uv_now(api->loop));
 
     for (size_t i = queue->bottom_running; i < queue->separator; ++i){
-        if (PAUSE != queue->conns[i]->status)
+        if (CONN_PAUSE != queue->conns[i]->status)
             continue;
 
         curl_multi_add_handle(api->multi_handle, queue->conns[i]->easy_handle);
-        queue->conns[i]->status = RUNNING; 
+        queue->conns[i]->status = CONN_RUNNING; 
     }
 }
 
