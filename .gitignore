@@ -5,3 +5,4 @@ update_curl.sh
 obj
 test/test-api
 test/test-ws
+test/spawn

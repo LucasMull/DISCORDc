@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <libconcord.h>
 #include "concord-common.h"
@@ -76,6 +77,14 @@ concord_t*
 concord_init(char token[])
 {
     concord_t *new_concord = safe_calloc(1, sizeof *new_concord);
+
+    /* trim token at non-printable character, if found */
+    for (int i=0; token[i] != '\0'; ++i){
+        if (!isgraph(token[i])){
+            token[i] = '\0';
+            break;
+        }
+    }
 
     new_concord->api = Concord_api_init(token);
     new_concord->ws = Concord_ws_init(token);

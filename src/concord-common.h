@@ -6,7 +6,7 @@
 
 
 #define DEBUG_MODE     1 /* set to 1 to activate debug mode */
-#define MEMDEBUG_MODE  1 /* set to 1 to activate memdebug mode */
+#define MEMDEBUG_MODE  0 /* set to 1 to activate memdebug mode */
 
 
 #define BASE_API_URL "https://discord.com/api"
@@ -177,7 +177,6 @@ enum ws_status {
 };
 
 typedef struct concord_ws_s {
-    char *token;
     /* https://discord.com/developers/docs/topics/gateway#identify-identify-structure */
     jscon_item_t *identify;
 

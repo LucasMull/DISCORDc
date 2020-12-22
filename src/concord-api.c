@@ -16,7 +16,7 @@ Concord_api_init(char token[])
     new_api->loop = uv_default_loop();
     uv_loop_set_data(new_api->loop, new_api);
 
-    new_api->token = strndup(token, strlen(token)-1);
+    new_api->token = strdup(token);
     ASSERT_S(NULL != new_api->token, "Out of memory");
 
     new_api->request_header = Concord_reqheader_init(new_api);
