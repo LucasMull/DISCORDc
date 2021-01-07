@@ -1,6 +1,6 @@
-# WORK IN PROGRESS
+# PLEASE READ
 
-This library is currently a work in progress. Many features are still missing and its ill advised to use it unless you want to contribute.
+This library will no longer be receive updates. Instead, check out [orca](https://github.com/cee-studio/orca), a discord library that I will be working on.
 
 ## Dependencies
 
