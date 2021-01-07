@@ -1,6 +1,6 @@
 # PLEASE READ
 
-This library will no longer be receive updates. Instead, check out [orca](https://github.com/cee-studio/orca), a discord library that I will be working on.
+This library will no longer be receiving updates. Check out [orca](https://github.com/cee-studio/orca) instead, a entirely made in C discord library that I will be working on.
 
 ## Dependencies
 
